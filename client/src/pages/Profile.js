@@ -3,6 +3,7 @@ import {useQuery, useMutation} from '@apollo/client';
 import {useParams, Redirect} from 'react-router-dom';
 
 import ThoughtList from '../components/ThoughtList';
+import ThoughtForm from '../components/ThoughtForm';
 import FriendList from '../components/FriendList';
 
 import {QUERY_USER, QUERY_ME} from '../utils/queries';
@@ -61,6 +62,7 @@ const Profile = props => {
           <FriendList username={user.username} friendCount={user.friendCount} friends={user.friends} />
         </div>
       </div>
+      <div className="mb-3">{!userParam && <ThoughtForm />}</div>
     </div>
   );
 };
