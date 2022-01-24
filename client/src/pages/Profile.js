@@ -1,11 +1,12 @@
 import React from 'react';
-import {useQuery} from '@apollo/client';
+import {useQuery, useMutation} from '@apollo/client';
 import {useParams, Redirect} from 'react-router-dom';
 
 import ThoughtList from '../components/ThoughtList';
 import FriendList from '../components/FriendList';
 
 import {QUERY_USER, QUERY_ME} from '../utils/queries';
+import {ADD_FRIEND} from '../utils/mutations';
 import Auth from '../utils/auth';
 
 const Profile = props => {
@@ -13,8 +14,19 @@ const Profile = props => {
 
   const {loading, data} = useQuery(userParam ? QUERY_USER : QUERY_ME, {variables: {username: userParam}});
 
+  const [addFriend] = useMutation(ADD_FRIEND);
+
   const user = data?.me || data?.user || {};
 
+  const handleClick = async () => {
+    try {
+      await addFriend({
+        variables: {id: user._id},
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  };
   // redirect to person profile page if username is the logged-in user's
   if (Auth.loggedIn() && Auth.getProfile().data.username === userParam) {
     return <Redirect to="/profile" />;
@@ -33,6 +45,11 @@ const Profile = props => {
         <h2 className="bg-dark text-secondary p-3 display-inline-block">
           Viewing {userParam ? `${user.username}'s` : 'your'} profile
         </h2>
+        {userParam && (
+          <button className="btn ml-auto" onClick={handleClick}>
+            Add Friend
+          </button>
+        )}
       </div>
 
       <div className="flex-row justify-space-between mb-3">
